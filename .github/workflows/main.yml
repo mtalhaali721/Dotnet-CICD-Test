@@ -1,9 +1,10 @@
 name: Continous Integration and Deployment
 
 on:
-  push:
+  pull_request:
     branches:
       - main
+      - develop
 
 jobs:
   build:
@@ -24,3 +25,26 @@ jobs:
       - name: Build application
         run: dotnet build -c Release
         
+  deploy-development:
+    runs-on: windows-latest
+    needs: build
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.ref == 'refs/heads/develop'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Deploy to Development
+      run: dotnet publish -c Release -o .o/outDev
+
+  deploy-production:
+    runs-on: windows-latest
+    needs: build
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Deploy to Production
+      run: dotnet publish -c Release -o .o/outProd
