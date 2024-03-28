@@ -31,9 +31,11 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.ref == 'refs/heads/develop'
     
     steps:
+    
     - name: Checkout code
       uses: actions/checkout@v2
-      
+    - name: Debug GitHub Event
+      run: echo "Inside If statement"
     - name: Deploy to Development
       run: dotnet publish -c Release -o .o/outDev
 
@@ -45,6 +47,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      
+    - name: Debug GitHub Event
+      run: echo "Inside If statement"
     - name: Deploy to Production
       run: dotnet publish -c Release -o .o/outProd
